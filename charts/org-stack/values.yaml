@@ -2,12 +2,12 @@ orgName: "example-org"
 
 images:
   backend:
-    repository: myapp/backend
-    tag: "0.1.0"
+    repository: ghcr.io/zdravkobonev/organization-be
+    tag: "0.2.0"
     pullPolicy: IfNotPresent
   frontend:
-    repository: myapp/frontend
-    tag: "0.1.0"
+    repository: ghcr.io/zdravkobonev/organization-fe
+    tag: "0.2.0"
     pullPolicy: IfNotPresent
   postgres:
     repository: postgres
@@ -29,6 +29,7 @@ postgres:
 backend:
   port: 8000
   env: []
+  secretKey: "pxXzvBWeqyJ38Z2QmTYIfJDFl5Of9s47Cq76OmGhaPabqoM-Yfi_Rx8if7k25bXiK3FaDx_0GZcaxiljFBVarQ"
 
 seed:
   adminUsername: "admin"
