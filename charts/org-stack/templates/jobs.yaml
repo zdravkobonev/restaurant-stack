@@ -1,0 +1,43 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: migrate
+  namespace: {{ .Values.orgName }}
+  annotations:
+    "helm.sh/hook": post-install,post-upgrade
+    "helm.sh/hook-weight": "1"
+spec:
+  template:
+    spec:
+      restartPolicy: Never
+      initContainers:
+        - name: wait-db
+          image: busybox
+          command: ['sh','-c','until nc -z postgres.{{ .Values.orgName }}.svc.cluster.local 5432; do echo waiting for db; sleep 2; done']
+      containers:
+        - name: migrate
+          image: "{{ .Values.images.backend.repository }}:{{ .Values.images.backend.tag }}"
+          envFrom: [ { secretRef: { name: app-env } } ]
+          command: ['sh','-c','alembic upgrade head']
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: seed
+  namespace: {{ .Values.orgName }}
+  annotations:
+    "helm.sh/hook": post-install,post-upgrade
+    "helm.sh/hook-weight": "2"
+spec:
+  template:
+    spec:
+      restartPolicy: Never
+      initContainers:
+        - name: wait-db
+          image: busybox
+          command: ['sh','-c','until nc -z postgres.{{ .Values.orgName }}.svc.cluster.local 5432; do echo waiting for db; sleep 2; done']
+      containers:
+        - name: seed
+          image: "{{ .Values.images.backend.repository }}:{{ .Values.images.backend.tag }}"
+          envFrom: [ { secretRef: { name: app-env } } ]
+          command: ['sh','-c','python -u seeds/seed_admin.py']

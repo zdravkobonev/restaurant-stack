@@ -1,0 +1,6 @@
+apiVersion: v2
+name: org-stack
+description: Full org stack (BE + FE + DB) with migrations & seed
+type: application
+version: 0.1.0
+appVersion: "0.1.0"
