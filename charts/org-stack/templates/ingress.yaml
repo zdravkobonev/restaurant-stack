@@ -3,18 +3,18 @@ apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   name: org-ingress
-  namespace: {{ .Values.orgName }}
+  namespace: {{ include "org.ns" . }}
 spec:
   ingressClassName: {{ .Values.ingress.className }}
   rules:
-    - host: {{ .Values.ingress.hostFE }}
+    - host: {{ include "org.ingress.hostFE" . }}
       http:
         paths:
           - path: /
             pathType: Prefix
             backend:
               service: { name: frontend, port: { number: 80 } }
-    - host: {{ .Values.ingress.hostBE }}
+    - host: {{ include "org.ingress.hostBE" . }}
       http:
         paths:
           - path: /

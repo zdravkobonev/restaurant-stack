@@ -16,8 +16,9 @@ images:
 ingress:
   enabled: true
   className: nginx
-  hostFE: "fe.local"
-  hostBE: "api.local"
+  baseDomain: "local"  # лесно ще го override-нем за nip.io (виж командите по-долу)
+  hostFE: ""           # по дефолт се изчислява <org>-fe.<baseDomain>
+  hostBE: ""           # по дефолт се изчислява <org>-api.<baseDomain>
 
 postgres:
   enabled: true
