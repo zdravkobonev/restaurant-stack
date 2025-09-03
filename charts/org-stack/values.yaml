@@ -31,6 +31,12 @@ backend:
   port: 8000
   env: []
   secretKey: "pxXzvBWeqyJ38Z2QmTYIfJDFl5Of9s47Cq76OmGhaPabqoM-Yfi_Rx8if7k25bXiK3FaDx_0GZcaxiljFBVarQ"
+  cors:
+    allowedOrigins: []                               # ако е празно -> автоматично FE origin-а за този release
+    allowCredentials: true
+    allowMethods: ["GET","POST","PUT","PATCH","DELETE","OPTIONS"]
+    allowHeaders: ["Authorization","Content-Type"]
+
 
 seed:
   adminUsername: "admin"

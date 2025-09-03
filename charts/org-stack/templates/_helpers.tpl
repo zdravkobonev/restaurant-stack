@@ -20,3 +20,20 @@
 {{ printf "%s-api.%s" (include "org.ns" .) (default "local" .Values.ingress.baseDomain) }}
 {{- end -}}
 {{- end -}}
+
+{{/* FE origin: http://<fe-host> */}}
+{{- define "org.ingress.originFE" -}}
+{{ printf "http://%s" (include "org.ingress.hostFE" .) }}
+{{- end -}}
+
+{{/* CORS allowed origins (nil-safe):
+     ако backend.cors.allowedOrigins е празен или липсва → ползвай FE origin-а */}}
+{{- define "org.cors.allowedOrigins" -}}
+{{- $cors := default (dict) .Values.backend.cors -}}
+{{- $allowed := default (list) $cors.allowedOrigins -}}
+{{- if gt (len $allowed) 0 -}}
+{{ join "," $allowed }}
+{{- else -}}
+{{ include "org.ingress.originFE" . }}
+{{- end -}}
+{{- end -}}

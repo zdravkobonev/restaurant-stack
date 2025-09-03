@@ -4,7 +4,8 @@ metadata:
   name: backend
   namespace: {{ include "org.ns" . }}
 spec:
-  selector: { app: backend }
+  selector:
+    app: backend
   ports:
     - name: http
       port: 80
@@ -17,9 +18,13 @@ metadata:
   namespace: {{ include "org.ns" . }}
 spec:
   replicas: 1
-  selector: { matchLabels: { app: backend } }
+  selector:
+    matchLabels:
+      app: backend
   template:
-    metadata: { labels: { app: backend } }
+    metadata:
+      labels:
+        app: backend
     spec:
       containers:
         - name: backend
@@ -28,12 +33,35 @@ spec:
           ports:
             - containerPort: {{ .Values.backend.port }}
           envFrom:
-            - secretRef: { name: app-env }
+            - secretRef:
+                name: app-env
           env:
-{{- toYaml .Values.backend.env | nindent 12 }}
+{{- with .Values.backend.env }}
+{{- range . }}
+            - name: {{ .name }}
+              value: {{ .value | quote }}
+{{- end }}
+{{- end }}
+            # --- CORS (nil-safe) ---
+{{- $cors := default (dict) .Values.backend.cors }}
+{{- $allowCreds := default true $cors.allowCredentials }}
+{{- $allowMethods := default (list "GET" "POST" "PUT" "PATCH" "DELETE" "OPTIONS") $cors.allowMethods }}
+{{- $allowHeaders := default (list "Authorization" "Content-Type") $cors.allowHeaders }}
+            - name: CORS_ALLOW_ORIGINS
+              value: {{ include "org.cors.allowedOrigins" . | quote }}
+            - name: CORS_ALLOW_CREDENTIALS
+              value: {{ $allowCreds | quote }}
+            - name: CORS_ALLOW_METHODS
+              value: {{ join "," $allowMethods | quote }}
+            - name: CORS_ALLOW_HEADERS
+              value: {{ join "," $allowHeaders | quote }}
           readinessProbe:
-            httpGet: { path: /health, port: {{ .Values.backend.port }} }
+            httpGet:
+              path: /health
+              port: {{ .Values.backend.port }}
             initialDelaySeconds: 5
           livenessProbe:
-            httpGet: { path: /health, port: {{ .Values.backend.port }} }
+            httpGet:
+              path: /health
+              port: {{ .Values.backend.port }}
             initialDelaySeconds: 10
