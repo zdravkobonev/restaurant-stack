@@ -1,13 +1,9 @@
-{{/* Връща namespace-а за инстанцията */}}
+{{/* Namespace = винаги release namespace */}}
 {{- define "org.ns" -}}
-{{- if .Values.orgName -}}
-{{ .Values.orgName }}
-{{- else -}}
 {{ .Release.Namespace }}
 {{- end -}}
-{{- end -}}
 
-{{/* FE hostname: <org>-fe.<baseDomain> (освен ако hostFE е зададен изрично) */}}
+{{/* FE hostname: <ns>-fe.<baseDomain> (освен ако hostFE е зададен изрично) */}}
 {{- define "org.ingress.hostFE" -}}
 {{- if .Values.ingress.hostFE -}}
 {{ .Values.ingress.hostFE }}
@@ -16,7 +12,7 @@
 {{- end -}}
 {{- end -}}
 
-{{/* BE hostname: <org>-api.<baseDomain> (освен ако hostBE е зададен изрично) */}}
+{{/* BE hostname: <ns>-api.<baseDomain> (освен ако hostBE е зададен изрично) */}}
 {{- define "org.ingress.hostBE" -}}
 {{- if .Values.ingress.hostBE -}}
 {{ .Values.ingress.hostBE }}
