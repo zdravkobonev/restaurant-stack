@@ -2,7 +2,7 @@ apiVersion: batch/v1
 kind: Job
 metadata:
   name: migrate
-  namespace: {{ include "org.ns" . }}
+  namespace: {{ include "restaurant.ns" . }}
   annotations:
     "helm.sh/hook": post-install,post-upgrade
     "helm.sh/hook-weight": "1"
@@ -14,7 +14,7 @@ spec:
       initContainers:
         - name: wait-db
           image: busybox
-          command: ['sh','-c','until nc -z postgres.{{ include "org.ns" . }}.svc.cluster.local 5432; do echo waiting for db; sleep 2; done']
+          command: ['sh','-c','until nc -z postgres.{{ include "restaurant.ns" . }}.svc.cluster.local 5432; do echo waiting for db; sleep 2; done']
       containers:
         - name: migrate
           image: "{{ .Values.images.backend.repository }}:{{ .Values.images.backend.tag }}"
@@ -25,7 +25,7 @@ apiVersion: batch/v1
 kind: Job
 metadata:
   name: seed
-  namespace: {{ include "org.ns" . }}
+  namespace: {{ include "restaurant.ns" . }}
   annotations:
     "helm.sh/hook": post-install,post-upgrade
     "helm.sh/hook-weight": "2"
@@ -37,7 +37,7 @@ spec:
       initContainers:
         - name: wait-db
           image: busybox
-          command: ['sh','-c','until nc -z postgres.{{ include "org.ns" . }}.svc.cluster.local 5432; do echo waiting for db; sleep 2; done']
+          command: ['sh','-c','until nc -z postgres.{{ include "restaurant.ns" . }}.svc.cluster.local 5432; do echo waiting for db; sleep 2; done']
       containers:
         - name: seed
           image: "{{ .Values.images.backend.repository }}:{{ .Values.images.backend.tag }}"

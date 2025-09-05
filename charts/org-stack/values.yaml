@@ -1,13 +1,13 @@
-orgName: "example-org"
+restaurantName: "example-restaurant"
 
 images:
   backend:
-    repository: ghcr.io/zdravkobonev/organization-be
-    tag: "0.2.0"
+    repository: ghcr.io/zdravkobonev/restaurant-be
+    tag: "0.0.1"
     pullPolicy: IfNotPresent
   frontend:
-    repository: ghcr.io/zdravkobonev/organization-fe
-    tag: "0.2.0"
+    repository: ghcr.io/zdravkobonev/restaurant-fe
+    tag: "0.0.1"
     pullPolicy: IfNotPresent
   postgres:
     repository: postgres
@@ -17,8 +17,8 @@ ingress:
   enabled: true
   className: nginx
   baseDomain: "local"  # лесно ще го override-нем за nip.io (виж командите по-долу)
-  hostFE: ""           # по дефолт се изчислява <org>-fe.<baseDomain>
-  hostBE: ""           # по дефолт се изчислява <org>-api.<baseDomain>
+  hostFE: ""           # по дефолт се изчислява <restaurantName>-fe.<baseDomain>
+  hostBE: ""           # по дефолт се изчислява <restaurantName>-api.<baseDomain>
 
 postgres:
   enabled: true

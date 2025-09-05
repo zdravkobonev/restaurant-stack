@@ -2,7 +2,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: backend
-  namespace: {{ include "org.ns" . }}
+  namespace: {{ include "restaurant.ns" . }}
 spec:
   selector:
     app: backend
@@ -15,7 +15,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: backend
-  namespace: {{ include "org.ns" . }}
+  namespace: {{ include "restaurant.ns" . }}
 spec:
   replicas: 1
   selector:
@@ -48,7 +48,7 @@ spec:
 {{- $allowMethods := default (list "GET" "POST" "PUT" "PATCH" "DELETE" "OPTIONS") $cors.allowMethods }}
 {{- $allowHeaders := default (list "Authorization" "Content-Type") $cors.allowHeaders }}
             - name: CORS_ALLOW_ORIGINS
-              value: {{ include "org.cors.allowedOrigins" . | quote }}
+              value: {{ include "restaurant.cors.allowedOrigins" . | quote }}
             - name: CORS_ALLOW_CREDENTIALS
               value: {{ $allowCreds | quote }}
             - name: CORS_ALLOW_METHODS
