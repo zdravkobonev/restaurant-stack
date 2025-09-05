@@ -1,45 +1,69 @@
 apiVersion: batch/v1
 kind: Job
 metadata:
-  name: migrate
+  name: {{ include "restaurant.fullname" (dict "root" . "name" "migrate") }}
   namespace: {{ include "restaurant.ns" . }}
+  labels:
+    {{- include "restaurant.labels" (dict "root" . "component" "job-migrate") | nindent 4 }}
   annotations:
     "helm.sh/hook": post-install,post-upgrade
     "helm.sh/hook-weight": "1"
     "helm.sh/hook-delete-policy": before-hook-creation,hook-succeeded
 spec:
   template:
+    metadata:
+      labels:
+        {{- include "restaurant.labels" (dict "root" . "component" "job-migrate") | nindent 8 }}
     spec:
       restartPolicy: Never
       initContainers:
         - name: wait-db
           image: busybox
-          command: ['sh','-c','until nc -z postgres.{{ include "restaurant.ns" . }}.svc.cluster.local 5432; do echo waiting for db; sleep 2; done']
+          command:
+            - sh
+            - -c
+            - >
+              until nc -z {{ include "restaurant.fullname" (dict "root" . "name" "postgres") }}.{{ include "restaurant.ns" . }}.svc.cluster.local 5432;
+              do echo waiting for db; sleep 2; done
       containers:
         - name: migrate
           image: "{{ .Values.images.backend.repository }}:{{ .Values.images.backend.tag }}"
-          envFrom: [ { secretRef: { name: app-env } } ]
+          envFrom:
+            - secretRef:
+                name: {{ include "restaurant.fullname" (dict "root" . "name" "app-env") }}
           command: ['sh','-c','alembic upgrade head']
 ---
 apiVersion: batch/v1
 kind: Job
 metadata:
-  name: seed
+  name: {{ include "restaurant.fullname" (dict "root" . "name" "seed") }}
   namespace: {{ include "restaurant.ns" . }}
+  labels:
+    {{- include "restaurant.labels" (dict "root" . "component" "job-seed") | nindent 4 }}
   annotations:
     "helm.sh/hook": post-install,post-upgrade
     "helm.sh/hook-weight": "2"
     "helm.sh/hook-delete-policy": before-hook-creation,hook-succeeded
 spec:
   template:
+    metadata:
+      labels:
+        {{- include "restaurant.labels" (dict "root" . "component" "job-seed") | nindent 8 }}
     spec:
       restartPolicy: Never
       initContainers:
         - name: wait-db
           image: busybox
-          command: ['sh','-c','until nc -z postgres.{{ include "restaurant.ns" . }}.svc.cluster.local 5432; do echo waiting for db; sleep 2; done']
+          command:
+            - sh
+            - -c
+            - >
+              until nc -z {{ include "restaurant.fullname" (dict "root" . "name" "postgres") }}.{{ include "restaurant.ns" . }}.svc.cluster.local 5432;
+              do echo waiting for db; sleep 2; done
       containers:
         - name: seed
           image: "{{ .Values.images.backend.repository }}:{{ .Values.images.backend.tag }}"
-          envFrom: [ { secretRef: { name: app-env } } ]
+          envFrom:
+            - secretRef:
+                name: {{ include "restaurant.fullname" (dict "root" . "name" "app-env") }}
           command: ['sh','-c','python -u seeds/seed_admin.py']

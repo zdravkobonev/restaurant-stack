@@ -1,5 +1,3 @@
-restaurantName: "example-restaurant"
-
 images:
   backend:
     repository: ghcr.io/zdravkobonev/restaurant-be
@@ -16,9 +14,9 @@ images:
 ingress:
   enabled: true
   className: nginx
-  baseDomain: "local"  # лесно ще го override-нем за nip.io (виж командите по-долу)
-  hostFE: ""           # по дефолт се изчислява <restaurantName>-fe.<baseDomain>
-  hostBE: ""           # по дефолт се изчислява <restaurantName>-api.<baseDomain>
+  baseDomain: "local"      # override във Flux values → реалния домейн
+  hostFE: ""               # ако празно → <release>-fe.<baseDomain>
+  hostBE: ""               # ако празно → <release>-api.<baseDomain>
 
 postgres:
   enabled: true
@@ -36,7 +34,6 @@ backend:
     allowCredentials: true
     allowMethods: ["GET","POST","PUT","PATCH","DELETE","OPTIONS"]
     allowHeaders: ["Authorization","Content-Type"]
-
 
 seed:
   adminUsername: "admin"

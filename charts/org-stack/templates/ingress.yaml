@@ -2,8 +2,10 @@
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: restaurant-ingress
+  name: {{ include "restaurant.fullname" (dict "root" . "name" "ingress") }}
   namespace: {{ include "restaurant.ns" . }}
+  labels:
+    {{- include "restaurant.labels" (dict "root" . "component" "ingress") | nindent 4 }}
 spec:
   ingressClassName: {{ .Values.ingress.className }}
   rules:
@@ -13,12 +15,16 @@ spec:
           - path: /
             pathType: Prefix
             backend:
-              service: { name: frontend, port: { number: 80 } }
+              service:
+                name: {{ include "restaurant.fullname" (dict "root" . "name" "frontend") }}
+                port: { number: 80 }
     - host: {{ include "restaurant.ingress.hostBE" . }}
       http:
         paths:
           - path: /
             pathType: Prefix
             backend:
-              service: { name: backend, port: { number: 80 } }
+              service:
+                name: {{ include "restaurant.fullname" (dict "root" . "name" "backend") }}
+                port: { number: 80 }
 {{- end }}
